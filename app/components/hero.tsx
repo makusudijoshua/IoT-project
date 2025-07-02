@@ -1,15 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Card from "@/app/components/card";
+import SoundCard from "@/app/components/SoundCard";
 import { TbTemperatureSun } from "react-icons/tb";
 import { IoWaterOutline } from "react-icons/io5";
-import { GiSoundWaves } from "react-icons/gi";
-import { formatDistanceToNow } from "date-fns";
 
 type SensorReading = {
   temperature: number;
   humidity: number;
   sound?: number;
+  amplitude?: number;
   timestamp: number;
 };
 
@@ -23,7 +23,7 @@ const Hero = () => {
       const rawData = await res.json();
 
       const entries: SensorReading[] = Object.values(rawData);
-      entries.sort((a, b) => b.timestamp - a.timestamp); // newest first
+      entries.sort((a, b) => b.timestamp - a.timestamp);
 
       setCurrent(entries[0] || null);
       setPrevious(entries[1] || null);
@@ -41,11 +41,11 @@ const Hero = () => {
   if (!current) return <p className="py-8">Loading cards...</p>;
 
   return (
-    <div className="flex flex-row gap-16">
+    <div className="flex md:flex-row gap-8">
       <Card
         title="Temperature"
         currentReading={
-          current?.temperature !== undefined ? `${current.temperature}°C` : "—"
+          current.temperature !== undefined ? `${current.temperature}°C` : "—"
         }
         latestReading={`${previous?.temperature ?? "—"}°C`}
         icon={<TbTemperatureSun />}
@@ -53,17 +53,12 @@ const Hero = () => {
       <Card
         title="Humidity"
         currentReading={
-          current?.humidity !== undefined ? `${current.humidity} %` : "—"
+          current.humidity !== undefined ? `${current.humidity} %` : "—"
         }
         latestReading={`${previous?.humidity ?? "—"} %`}
         icon={<IoWaterOutline />}
       />
-      <Card
-        title="Sound"
-        currentReading={`${current.sound ?? "—"} dB`}
-        latestReading={`${previous?.sound ?? "—"} dB`}
-        icon={<GiSoundWaves />}
-      />
+      <SoundCard />
     </div>
   );
 };
